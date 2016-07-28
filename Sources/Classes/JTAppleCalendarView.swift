@@ -115,7 +115,7 @@ public class JTAppleCalendarView: UIView {
 
     var dateComponents = NSDateComponents()
     var delayedExecutionClosure: [(()->Void)] = []
-    var lastOrientation: UIInterfaceOrientation?
+//    var lastOrientation: UIInterfaceOrientation?
     
     var currentSectionPage: Int {
         return (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).sectionFromRectOffset(calendarView.contentOffset)
@@ -188,9 +188,10 @@ public class JTAppleCalendarView: UIView {
     var registeredHeaderViews: [JTAppleCalendarViewSource] = []
     
     /// Enable or disable paging when the calendar view is scrolled
-    public var pagingEnabled: Bool = true {
-        didSet { calendarView.pagingEnabled = pagingEnabled }
-    }
+    public var pagingEnabled: Bool = true
+//        {
+//        didSet { calendarView.pagingEnabled = pagingEnabled }
+//    }
     
     
     /// Enable or disable swipe scrolling of the calendar with this variable
@@ -209,7 +210,7 @@ public class JTAppleCalendarView: UIView {
         let cv = UICollectionView(frame: CGRectZero, collectionViewLayout: layout)
         cv.dataSource = self
         cv.delegate = self
-        cv.pagingEnabled = true
+//        cv.pagingEnabled = true
         cv.backgroundColor = UIColor.clearColor()
         cv.showsHorizontalScrollIndicator = false
         cv.showsVerticalScrollIndicator = false
@@ -236,18 +237,18 @@ public class JTAppleCalendarView: UIView {
     override public var frame: CGRect {
         didSet {
             calendarView.frame = CGRect(x:0.0, y:/*bufferTop*/0.0, width: self.frame.size.width, height:self.frame.size.height/* - bufferBottom*/)
-            let orientation = UIApplication.sharedApplication().statusBarOrientation
-            if orientation == .Unknown { return }
-            if lastOrientation != orientation {
+//            let orientation = UIApplication.sharedApplication().statusBarOrientation
+//            if orientation == .Unknown { return }
+//            if lastOrientation != orientation {
                 calendarView.collectionViewLayout.invalidateLayout()
                 let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
                 layout.clearCache()   
-                lastOrientation = orientation
+//                lastOrientation = orientation
                 updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
                 if delegate != nil { reloadData() }
-            } else {
+//            } else {
                 updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
-            }
+//            }
         }
     }
     
