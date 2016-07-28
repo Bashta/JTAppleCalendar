@@ -115,7 +115,10 @@ public class JTAppleCalendarView: UIView {
 
     var dateComponents = NSDateComponents()
     var delayedExecutionClosure: [(()->Void)] = []
-//    var lastOrientation: UIInterfaceOrientation?
+    
+    #if os(iOS)
+        var lastOrientation: UIInterfaceOrientation?
+    #endif
     
     var currentSectionPage: Int {
         return (calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol).sectionFromRectOffset(calendarView.contentOffset)
@@ -236,19 +239,29 @@ public class JTAppleCalendarView: UIView {
     /// The frame rectangle which defines the view's location and size in its superview coordinate system.
     override public var frame: CGRect {
         didSet {
-            calendarView.frame = CGRect(x:0.0, y:/*bufferTop*/0.0, width: self.frame.size.width, height:self.frame.size.height/* - bufferBottom*/)
-//            let orientation = UIApplication.sharedApplication().statusBarOrientation
-//            if orientation == .Unknown { return }
-//            if lastOrientation != orientation {
+            #if os(iOS)
+                let orientation = UIApplication.sharedApplication().statusBarOrientation
+                if orientation == .Unknown { return }
+                if lastOrientation != orientation {
+                    
+                    calendarView.collectionViewLayout.invalidateLayout()
+                    let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
+                    layout.clearCache()
+                    lastOrientation = orientation
+                    updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
+                    if delegate != nil { reloadData() }
+                } else {
+                    updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
+                }
+            #elseif os(tvOS)
                 calendarView.collectionViewLayout.invalidateLayout()
                 let layout = calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol
-                layout.clearCache()   
-//                lastOrientation = orientation
+                layout.clearCache()
                 updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
                 if delegate != nil { reloadData() }
-//            } else {
-                updateLayoutItemSize(self.calendarView.collectionViewLayout as! JTAppleCalendarLayoutProtocol)
-//            }
+            #endif
+            calendarView.frame = CGRect(x:0.0, y:/*bufferTop*/0.0, width: self.frame.size.width, height:self.frame.size.height/* - bufferBottom*/)
+            
         }
     }
     
